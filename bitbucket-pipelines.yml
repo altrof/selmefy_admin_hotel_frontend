@@ -5,8 +5,6 @@ pipelines:
     '**':
       - step:
           name: Build and test
-          caches:
-            - node
           script:
             - npm --version
             - node --version
@@ -17,8 +15,6 @@ pipelines:
       - parallel:
           - step:
               name: Build and Test
-              caches:
-                - node
               script:
                 - npm ci
                 - npm run test:unit
