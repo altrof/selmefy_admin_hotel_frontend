@@ -9,14 +9,16 @@ const { isLoading } = storeToRefs(useLoadingStore());
   <button
     class="inline-block px-7 py-3 h-14 bg-blue-600 disabled:cursor-not-allowed border-gray-900 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full content-center justify-center items-center disabled:opacity-40"
     type="button"
+    data-testid="base-button"
     data-mdb-ripple="true"
     data-mdb-ripple-color="light"
     v-bind="$attrs"
   >
-    <p v-if="!isLoading" class="font-bold text-lg">Sign in</p>
-    <div class="flex relative justify-center">
+    <p v-if="!isLoading" data-testid="button-text" class="font-bold text-lg">
+      Sign in
+    </p>
+    <div v-show="isLoading" data-testid="button-loader" class="flex relative justify-center">
       <svg
-        v-show="isLoading"
         aria-hidden="true"
         class="mr-2 w-8 h-8 text-white-800 animate-spin dark:text-white-600 fill-blue-600"
         viewBox="0 0 100 101"
