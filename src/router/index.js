@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import AdminPanelMainView from "@/views/main-views/AdminPanelMainView";
+import AdminPanelMainView from "@/views/main-views/AdminPanelMainView.vue";
 import RoomsMainView from "@/views/main-views/RoomsMainView.vue";
 import BookingsMainView from "@/views/main-views/BookingsMainView.vue";
 import UsersMainView from "@/views/main-views/UsersMainView.vue";
