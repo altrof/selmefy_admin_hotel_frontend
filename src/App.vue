@@ -19,6 +19,9 @@ const { loggedIn } = storeToRefs(useLoggedInStore());
     </Navbar>
     <RouterView />
   </div>
+  <div v-else>
+    <LoginForm />
+  </div>
 </template>
 
 <style>
