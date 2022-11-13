@@ -9,7 +9,16 @@ const { loggedIn } = storeToRefs(useLoggedInStore());
 </script>
 
 <template>
-  <div>TEST</div>
+  <div v-if="loggedIn">
+    <Navbar>
+      <RouterLink to="/">Home</RouterLink>
+      <RouterLink to="/bookings">Bookings</RouterLink>
+      <RouterLink to="/rooms">Rooms</RouterLink>
+      <RouterLink to="/users">Users</RouterLink>
+      <RouterLink to="/special-offers">Special Offers</RouterLink>
+    </Navbar>
+    <RouterView />
+  </div>
 </template>
 
 <style>
