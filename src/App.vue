@@ -1,11 +1,13 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
 import Navbar from "@/components/_organisms/Navbar/Navbar.vue";
-import { useLoggedInStore } from "@/stores/login";
+import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
 import LoginForm from "@/components/_organisms/LoginForm/LoginForm.vue";
+import NotificationBottom from "@/components/_atoms/NotificationBottom/NotificationBottom.vue";
+import NotificationTop from "@/components/_atoms/NotificationTop/NotificationTop.vue";
 
-const { loggedIn } = storeToRefs(useLoggedInStore());
+const { loggedIn } = storeToRefs(useAuthStore());
 </script>
 
 <template>
@@ -21,6 +23,8 @@ const { loggedIn } = storeToRefs(useLoggedInStore());
   </div>
   <div v-else>
     <LoginForm />
+    <NotificationTop />
+    <NotificationBottom />
   </div>
 </template>
 
