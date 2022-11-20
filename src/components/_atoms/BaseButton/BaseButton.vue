@@ -17,7 +17,11 @@ const { isLoading } = storeToRefs(useLoadingStore());
     <p v-if="!isLoading" data-testid="button-text" class="font-bold text-lg">
       Sign in
     </p>
-    <div v-show="isLoading" data-testid="button-loader" class="flex relative justify-center">
+    <div
+      v-show="isLoading"
+      data-testid="button-loader"
+      class="flex relative justify-center"
+    >
       <svg
         aria-hidden="true"
         class="mr-2 w-8 h-8 text-white-800 animate-spin dark:text-white-600 fill-blue-600"
