@@ -1,10 +1,13 @@
 <script setup>
 import { useMobileStore } from "@/stores/mobile.js";
 import { useAuthStore } from "@/stores/auth.js";
+import { useAccountStore } from "@/stores/account.js";
 import { storeToRefs } from "pinia";
 import { defineComponent, h, onMounted, ref, useSlots } from "vue";
+import MyProfileNav from "@/components/_molecules/MyProfileNav/MyProfileNav.vue";
 
 const { logOut } = useAuthStore();
+const { username } = useAccountStore();
 const { checkScreen } = useMobileStore();
 const { mobile } = storeToRefs(useMobileStore());
 
@@ -73,9 +76,9 @@ const RouterLinks = defineComponent({
         </div>
       </transition>
     </div>
-    <button class="flex fixed bg-gray-300 right-10" @click="logOut">
-      LOG OUT
-    </button>
+    <div class="flex fixed bg-gray-300 right-10">
+      <MyProfileNav :username="username" @logout="logOut" />
+    </div>
   </div>
 </template>
 

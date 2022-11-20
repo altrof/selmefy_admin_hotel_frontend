@@ -3,7 +3,7 @@ import BaseInput from "@/components/_atoms/BaseInput/BaseInput.vue";
 import BaseButton from "@/components/_atoms/BaseButton/BaseButton.vue";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
-import {computed, onMounted} from "vue";
+import { computed, onMounted } from "vue";
 
 const { login, password } = storeToRefs(useAuthStore());
 const { signIn } = useAuthStore();
@@ -11,11 +11,11 @@ const { signIn } = useAuthStore();
 const isDisabled = computed(() => !(login.value && password.value));
 onMounted(() => {
   document.addEventListener("keydown", (event) => {
-    if (event.code === 'Enter' && !isDisabled.value) {
+    if (event.code === "Enter" && !isDisabled.value) {
       signIn();
     }
-  })
-})
+  });
+});
 </script>
 
 <template>
@@ -62,9 +62,9 @@ onMounted(() => {
               />
             </div>
 
-<!--            <div class="flex justify-between items-center mb-6">-->
-<!--              <Checkbox />-->
-<!--            </div>-->
+            <!--            <div class="flex justify-between items-center mb-6">-->
+            <!--              <Checkbox />-->
+            <!--            </div>-->
 
             <!-- Submit button -->
             <BaseButton @click="signIn" :disabled="isDisabled" />
