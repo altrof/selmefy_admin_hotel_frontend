@@ -1,10 +1,10 @@
 <script setup>
 import { useMobileStore } from "@/stores/mobile.js";
-import { useLoggedInStore } from "@/stores/login.js";
+import { useAuthStore } from "@/stores/auth.js";
 import { storeToRefs } from "pinia";
 import { defineComponent, h, onMounted, ref, useSlots } from "vue";
 
-const { logOut } = useLoggedInStore();
+const { logOut } = useAuthStore();
 const { checkScreen } = useMobileStore();
 const { mobile } = storeToRefs(useMobileStore());
 
