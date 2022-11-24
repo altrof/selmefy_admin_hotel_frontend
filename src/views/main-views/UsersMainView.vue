@@ -2,6 +2,7 @@
 
 import { usePersonstore } from "@/stores/person";
 import { storeToRefs } from "pinia";
+import BasicTable from "@/components/_atoms/BasicTable/BasicTable.vue";
 
 const { responseData } = storeToRefs(usePersonstore());
 console.log(responseData);
@@ -9,7 +10,9 @@ console.log(responseData);
 </script>
 
 <template>
-  <div>Here will show table with users..</div>
+    <BasicTable :tableData="responseData.data" />
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>
