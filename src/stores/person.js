@@ -15,11 +15,18 @@ export const usePersonstore = defineStore("person", () => {
 
     const responseData = ref(null);
     const peopleInBooking = ref({})
-
-  PersonsAPI.getAllPersons(0, 2, 'firstName').then((response) => {
+    const pageNumber = ref(null);
+/*
+  PersonsAPI.getAllPersons(pageNumber.value, 2, 'firstName').then((response) => {
     responseData.value = response;
   });
-
+*/
+  async function performRequest(receivedPageNumber) {
+    PersonsAPI.getAllPersons(receivedPageNumber, 2, 'firstName').then((response) => {
+        responseData.value = response;
+      });
+  }
+/*
     function addPersonToBooking(idCode, firstName, lastName, dateOfBirth) {
         const currentPerson = new Person(idCode, firstName, lastName, dateOfBirth)
         peopleInBooking.value[idCode] = currentPerson
@@ -31,6 +38,6 @@ export const usePersonstore = defineStore("person", () => {
         }
         alert(alertMessage)
     }
-
-    return {responseData, peopleInBooking, addPersonToBooking}
+*/
+    return {responseData, peopleInBooking, pageNumber, performRequest}
 })
