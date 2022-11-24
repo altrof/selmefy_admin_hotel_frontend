@@ -16,7 +16,7 @@ export const usePersonstore = defineStore("person", () => {
     const responseData = ref(null);
     const peopleInBooking = ref({})
 
-  PersonsAPI.getAllPersons().then((response) => {
+  PersonsAPI.getAllPersons(0, 2, 'firstName').then((response) => {
     responseData.value = response;
   });
 
