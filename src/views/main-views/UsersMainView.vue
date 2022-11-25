@@ -5,6 +5,7 @@ import { storeToRefs } from "pinia";
 import FormButton from "@/components/_atoms/FormButton/FormButton.vue";
 import BasicTable from "@/components/_atoms/BasicTable/BasicTable.vue";
 import BaseInput from "@/components/_atoms/BaseInput/BaseInput.vue";
+import BaseSelector from "@/components/_atoms/BaseSelector/BaseSelector.vue";
 import { onMounted } from "@vue/runtime-core";
 
 
@@ -18,6 +19,7 @@ let orderBy = "lastName"
 let filterBy = null
 let filterValue = null
 
+const validOrderBy = ["lastName", "firstName"];
 
 onMounted(() => {
     performRequest(pageNumber, pageSize, orderBy, filterBy, filterValue);
@@ -32,13 +34,11 @@ function nextPage() {
     }
 }
 
-function pageSizeHandler(event) {
+function runQuery() {
     performRequest(pageNumber, pageSize, orderBy, filterBy, filterValue)
-    console.log("Boo" + pageSize)
-
 }
 
-function inputChangeHandler(event) {
+function pageSizeChangeHandler(event) {
     pageSize = event.target.value
     console.log("Shoo" + event.target.value)
 }
@@ -46,16 +46,43 @@ function inputChangeHandler(event) {
 </script>
 
 <template>
-    <FormButton textContent="Next" @click-handler="nextPage()" />
-    <FormButton textContent="Page size" @click-handler="pageSizeHandler()"/>
-    <BaseInput label="Page size" 
-                v-model="pageSize" type="number" 
-                v-on:change="inputChangeHandler" />
     <!-- This part is only for waiting the request to arrive. -->
     <div v-if="responseData === null"> 
     </div>
     <div v-else>
+    <FormButton textContent="Search" @click-handler="runQuery()"/>
+    <FormButton textContent="Next Page" @click-handler="nextPage()" />
+    <BaseInput 
+        class="m-3"  
+        label="Page size" 
+        v-model="pageSize" 
+        type="number" 
+        v-on:change="pageSizeChangeHandler
+    " 
+        />
+    <BaseSelector  
+        class="m-3"       
+        label-text="Order by"
+        :options="Object.keys(responseData.data[0])"
+        :selected-option="orderBy"
+        />
+    
+    <BaseSelector  
+        class="m-3"       
+        label-text="Filter by"
+        :options="Object.keys(responseData.data[0])"
+        :selected-option="orderBy"
+            />
+
+    <BaseInput 
+        class="m-3"  
+        label="Filter value" 
+        v-model="filterValue" 
+        type="text" 
+        v-on:change="pageSizeChangeHandler" 
+        />
         <BasicTable :tableData="responseData.data" />
+    
     </div>
 </template>
 
