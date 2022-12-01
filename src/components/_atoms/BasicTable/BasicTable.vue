@@ -92,6 +92,14 @@ const format = (date) => {
 
   return `${year}-${month}-${day}`;
 };
+
+const changeOrderBy = key => {
+  arrSortByAsc.value[key]
+    ? (arrSortByAsc.value[key] = false)
+    : (arrSortByAsc.value[key] = true);
+
+  emits('orderBy', getPropertyName(key))
+}
 </script>
 
 <template>
@@ -102,7 +110,7 @@ const format = (date) => {
           <td v-if="showIndexes" class="px-4"></td>
           <td class="pt-4" v-for="(header, key) in tableHeaders" :key="key">
             <p
-              @click.prevent="$emit('orderBy', getPropertyName(key))"
+              @click.prevent="changeOrderBy(key)"
               class="flex cursor-pointer pl-8"
             >
               <span class="pt-0.5 pr-0.5">
