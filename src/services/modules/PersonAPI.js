@@ -1,16 +1,17 @@
 import api from "../api";
 
 export default {
-  getAllPersons(
+  getAllPersons({
     pageNumber = null,
     pageSize = null,
     orderBy = null,
+    orderType = null,
     filterBy = null,
-    filterValue = null
-  ) {
-    let requestPath = `/api/person`;
+    filterValue = null,
+  }) {
+    let requestPath = `/api/person?`;
     if (pageNumber !== null) {
-      requestPath += `?pageNumber=${pageNumber}`;
+      requestPath += `&pageNumber=${pageNumber}`;
     }
 
     if (pageSize !== null) {
@@ -19,6 +20,10 @@ export default {
 
     if (orderBy !== null) {
       requestPath += `&orderBy=${orderBy}`;
+    }
+
+    if (orderType !== null) {
+      requestPath += `&orderType=${orderType}`;
     }
 
     if (filterBy !== null) {

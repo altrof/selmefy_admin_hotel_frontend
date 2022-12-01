@@ -2,27 +2,15 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import PersonsAPI from "../services/modules/PersonAPI";
 
-export const usePersonstore = defineStore("person", () => {
+export const usePersonStore = defineStore("person", () => {
   const responseData = ref(null);
   const peopleInBooking = ref({});
 
-  async function performRequest(
-    pageNumber,
-    pageSize,
-    orderBy,
-    filterBy,
-    filterValue
-  ) {
-    PersonsAPI.getAllPersons(
-      pageNumber,
-      pageSize,
-      orderBy,
-      filterBy,
-      filterValue
-    ).then((response) => {
-      responseData.value = response;
+  const getAllPersonsWithParams = async (sortRuleObj) => {
+    await PersonsAPI.getAllPersons(sortRuleObj).then((response) => {
+      responseData.value = response.data;
     });
-  }
+  };
 
-  return { responseData, peopleInBooking, performRequest };
+  return { responseData, peopleInBooking, getAllPersonsWithParams };
 });

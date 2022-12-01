@@ -1,82 +1,145 @@
 <script setup>
-import { usePersonstore } from "@/stores/person";
+import { usePersonStore } from "@/stores/person";
 import { storeToRefs } from "pinia";
-import FormButton from "@/components/_atoms/FormButton/FormButton.vue";
 import BasicTable from "@/components/_atoms/BasicTable/BasicTable.vue";
-import BaseInput from "@/components/_atoms/BaseInput/BaseInput.vue";
 import BaseSelector from "@/components/_atoms/BaseSelector/BaseSelector.vue";
-import { onMounted } from "vue";
+import { ref, computed, onBeforeMount } from "vue";
+import Pagination from "@/components/_atoms/Pagination/Pagination.vue";
 
-const { performRequest } = usePersonstore();
+const personStore = usePersonStore();
 
-let { responseData } = storeToRefs(usePersonstore());
+const { responseData } = storeToRefs(usePersonStore());
+const page = ref(1);
+const currentPage = ref(1);
+const hasMorePages = ref(true);
+const filterBy = ref(null);
+const filterValue = ref(null);
+const inputSearch = ref("");
 
-let pageNumber = 0;
-let pageSize = 10;
-let orderBy = "lastName";
-let filterBy = null;
-let filterValue = null;
-
-const validOrderBy = ["lastName", "firstName"];
-
-onMounted(() => {
-  performRequest(pageNumber, pageSize, orderBy, filterBy, filterValue);
+const totalEntities = computed(() => {
+  return personStore.responseData
+    ? personStore.responseData.totalPeopleLength
+    : null;
+});
+let totalPages = computed(() => {
+  return totalEntities.value
+    ? Math.ceil(totalEntities.value / perPage.value)
+    : null;
 });
 
-function nextPage() {
-  pageNumber += 1;
-  performRequest(pageNumber, pageSize, orderBy, filterBy, filterValue);
-  if (responseData.value.data.length == 0) {
-    pageNumber = 0;
-    performRequest(pageNumber, pageSize, orderBy, filterBy, filterValue);
+const tableHeaders = [
+  "Identity code",
+  "Firstname",
+  "Lastname",
+  "Date of birth",
+  "Country",
+  "Phone number",
+];
+
+const pageSizeOptions = ref(["10", "25", "50", "100"]);
+
+const perPage = ref(pageSizeOptions.value[0] * 1);
+
+const peopleData = computed(() => responseData.value?.people);
+
+const getAllPersonsWithPageSizeParam = async () => {
+  await personStore.getAllPersonsWithParams({
+    pageSize: perPage.value,
+  });
+};
+
+const getAllPersonsWithPageSizeAndFilter = async () => {
+  await personStore.getAllPersonsWithParams({
+    pageNumber: currentPage.value - 1,
+    pageSize: perPage.value,
+    filterBy: filterBy.value,
+    filterValue: filterValue.value,
+  });
+};
+
+onBeforeMount(async () => {
+  await getAllPersonsWithPageSizeParam();
+  perPage.value = pageSizeOptions.value[0] * 1;
+});
+
+const changePageSizeOptions = (event) => {
+  perPage.value = event.target.value;
+  if (filterBy.value === "" || filterValue.value === "") {
+    getAllPersonsWithPageSizeParam();
   }
-}
+  onChange([filterBy.value, filterValue.value]);
+  perPage.value = event.target.value;
+  currentPage.value = 1;
+};
 
-function runQuery() {
-  performRequest(pageNumber, pageSize, orderBy, filterBy, filterValue);
-}
+const changePage = (pageNumber) => {
+  page.value = pageNumber;
+  currentPage.value = pageNumber;
+  getAllPersonsWithPageSizeAndFilter();
+};
 
-function pageSizeChangeHandler(event) {
-  pageSize = event.target.value;
-  console.log("Shoo" + event.target.value);
-}
+const onChange = async (properties) => {
+  currentPage.value = 1;
+  filterBy.value = properties[0];
+  filterValue.value = properties[1];
+
+  if (filterValue.value !== "") {
+    await getAllPersonsWithPageSizeAndFilter();
+  } else {
+    await getAllPersonsWithPageSizeParam();
+  }
+};
+
+const orderType = ref("ASC");
+const orderBy = async (propertyKey) => {
+  orderType.value === "ASC"
+    ? (orderType.value = "DESC")
+    : (orderType.value = "ASC");
+  await personStore.getAllPersonsWithParams({
+    orderBy: propertyKey,
+    orderType: orderType.value,
+    filterBy: filterBy.value,
+    filterValue: filterValue.value,
+    pageNumber: currentPage.value - 1,
+    pageSize: perPage.value,
+  });
+};
 </script>
 
 <template>
-  <!-- This part is only for waiting the request to arrive. -->
-  <div v-if="responseData === null"></div>
-  <div v-else>
-    <FormButton textContent="Search" @click-handler="runQuery()" />
-    <FormButton textContent="Next Page" @click-handler="nextPage()" />
-    <BaseInput
-      class="m-3"
-      label="Page size"
-      v-model="pageSize"
-      type="number"
-      v-on:change="pageSizeChangeHandler"
-    />
+  <!-- This part is only if responseData return null, it is mean, that something is broken. -->
+  <!-- Because if is all work and no data in DB, then should return Array with zero length. -->
+  <div v-if="peopleData === null || peopleData === undefined">
+    No user data to show, maybe something is broken...
+  </div>
+  <div v-else class="w-screen p-20">
     <BaseSelector
-      class="m-3"
-      label-text="Order by"
-      :options="Object.keys(responseData.data[0])"
-      :selected-option="orderBy"
+      class="w-20 m-20 -mb-16"
+      label-text="Page size"
+      :options="pageSizeOptions"
+      @change="changePageSizeOptions($event)"
     />
 
-    <BaseSelector
-      class="m-3"
-      label-text="Filter by"
-      :options="Object.keys(responseData.data[0])"
-      :selected-option="orderBy"
+    <BasicTable
+      :show-indexes="true"
+      :tableData="peopleData"
+      :table-headers="tableHeaders"
+      :current-page="currentPage"
+      :items-per-page="perPage * 1"
+      :test-a-b="inputSearch"
+      @search="onChange"
+      @orderBy="orderBy"
     />
-
-    <BaseInput
-      class="m-3"
-      label="Filter value"
-      v-model="filterValue"
-      type="text"
-      v-on:change="pageSizeChangeHandler"
-    />
-    <BasicTable :tableData="responseData.data" />
+    <div v-if="peopleData && peopleData.length > 0">
+      <Pagination
+        :total-pages="totalPages"
+        :total="totalEntities"
+        :per-page="perPage * 1"
+        :current-page="currentPage"
+        :has-more-pages="hasMorePages"
+        @pagechanged="changePage"
+      />
+    </div>
   </div>
 </template>
 
