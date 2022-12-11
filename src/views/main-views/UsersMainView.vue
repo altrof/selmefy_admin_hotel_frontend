@@ -14,7 +14,8 @@ const currentPage = ref(1);
 const hasMorePages = ref(true);
 const filterBy = ref(null);
 const filterValue = ref(null);
-const inputSearch = ref("");
+
+const peopleData = computed(() => responseData.value?.people);
 
 const totalEntities = computed(() => {
   return personStore.responseData
@@ -40,7 +41,6 @@ const pageSizeOptions = ref(["10", "25", "50", "100"]);
 
 const perPage = ref(pageSizeOptions.value[0] * 1);
 
-const peopleData = computed(() => responseData.value?.people);
 
 const getAllPersonsWithPageSizeParam = async () => {
   await personStore.getAllPersonsWithParams({
@@ -126,7 +126,8 @@ const orderBy = async (propertyKey) => {
       :table-headers="tableHeaders"
       :current-page="currentPage"
       :items-per-page="perPage * 1"
-      :test-a-b="inputSearch"
+      :editable="true"
+      :removable="true"
       @search="onChange"
       @orderBy="orderBy"
     />

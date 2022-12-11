@@ -79,4 +79,3 @@
   </NotificationGroup>
 </template>
 
-<style scoped></style>
